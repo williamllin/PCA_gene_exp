@@ -8,57 +8,56 @@ import matplotlib.pyplot as plt
 df0 = pd.read_csv('TCGA Lung Cancer (LUNG).csv')
 df = df0.dropna()
 
-#選擇主成分分析的特徵
-#選擇代表基因標記數值欄位
+# Select features for PCA
+#Choose numeric columns representing gene markers
 num_col = [
     'PDCD1', 'CD274', 'CTLA4', 'EGFR', 'ERBB2', 'TP53', 'CD276', 'VTCN1', 
     'C10orf54', 'TNFRSF9', 'TIGIT', 'HAVCR2'
 ]
 X = df[num_col]
 
-#標準化
-#確保所有特徵在同一尺度上
+# Standardization
+#Ensure all features are on the same scale
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-#主成分分析
-#建立PCA物件、降維轉換
+# Principal Component Analysis
+#Create PCA object and apply dimensionality reduction
 pca = PCA()
 X_pca = pca.fit_transform(X_scaled)
 
 #========================================================================
 
-#計算解釋方差比例
-#確定每個主成分解釋的數據變異程度（貢獻多少）
+# Calculate explained variance ratio
+#Determine how much variance each principal component explains
 explained_variance_ratio = pca.explained_variance_ratio_
 
-# Scree Plot (解釋方差比例)
+#Scree Plot (explained variance ratio)
 plt.figure(figsize=(10, 6))
 plt.bar(range(1, len(explained_variance_ratio) + 1), explained_variance_ratio)
-plt.xlabel('Principle Component')
-plt.ylabel('Explained variance ratio')
+plt.xlabel('Principal Component')
+plt.ylabel('Explained Variance Ratio')
 plt.title('Scree Plot')
 plt.tight_layout()
 plt.show()
 #plt.savefig('pca_scree_plot.png', dpi=300)
 plt.close()
 
-#解釋方差比例
-print("解釋方差比例：")
+#Print explained variance ratio
+print("Explained Variance Ratio:")
 for i, ratio in enumerate(explained_variance_ratio, 1):
-    print(f"第{i}主成分: {ratio:.4f} ({ratio*100:.2f}%)")
-#計算累積解釋方差，了解前幾個主成分能解釋多少總體變異
+    print(f"PC{i}: {ratio:.4f} ({ratio*100:.2f}%)")
+# Calculate cumulative explained variance
+print("\nCumulative Explained Variance Ratio:")
 cumulative_variance_ratio = np.cumsum(explained_variance_ratio)
-print("\n累積解釋方差比例：")
 for i, cum_ratio in enumerate(cumulative_variance_ratio, 1):
-    print(f"前{i}個主成分: {cum_ratio:.4f} ({cum_ratio*100:.2f}%)")
+    print(f"Top {i} PCs: {cum_ratio:.4f} ({cum_ratio*100:.2f}%)")
 
 #========================================================================
 
-#繪製前兩個主成分的散點圖
-#用不同顏色區分樣本類型
-#顏色：不同腫瘤樣本
-#點：每個病患樣本，對應的XY軸為第一第二主成分空間中的位置
+# Scatter plot of the first two principal components
+#Color points by sample type
+#Points: each patient sample, X and Y axes represent positions in PC1 and PC2 space
 codes, uniques = pd.factorize(df['sample_type'])
 plt.figure(figsize=(10, 8))
 scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], 
@@ -67,7 +66,7 @@ scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1],
 plt.xlabel(f'First PC (explained variance: {explained_variance_ratio[0]*100:.2f}%)')
 plt.ylabel(f'Second PC (explained variance: {explained_variance_ratio[1]*100:.2f}%)')
 plt.title('PCA')
-plt.colorbar(scatter, label='sample type(tumor)')
+plt.colorbar(scatter, label='Sample Type')
 
 import matplotlib.lines as mlines
 legend_elements = [
@@ -75,7 +74,7 @@ legend_elements = [
                   markerfacecolor=plt.cm.viridis(i/(len(uniques)-1)), markersize=8)
     for i, cat in enumerate(uniques)
 ]
-plt.legend(handles=legend_elements, title='sample type :')
+plt.legend(handles=legend_elements, title='Sample Type:')
 plt.tight_layout()
 plt.show()
 #plt.savefig('pca_scatter_plot.png', dpi=300)
@@ -83,14 +82,14 @@ plt.close()
 
 #========================================================================
 
-#計算成分載荷，分析每個原始特徵對主成分的貢獻
+# Calculate component loadings to analyze contribution of each feature to PCs
 component_loadings = pd.DataFrame(
     pca.components_.T, 
-    columns=[f'主成分{i+1}' for i in range(pca.n_components_)], 
+    columns=[f'PC{i+1}' for i in range(pca.n_components_)], 
     index=num_col
 )
-print("\n成分載荷：")
+print("\nComponent Loadings:")
 print(component_loadings)
 
-#CSV
+#Save to CSV
 component_loadings.to_csv('pca_component_loadings.csv')
