@@ -26,7 +26,7 @@ X_scaled = scaler.fit_transform(X)
 pca = PCA()
 X_pca = pca.fit_transform(X_scaled)
 
-#========================================================================
+
 
 # Calculate explained variance ratio
 #Determine how much variance each principal component explains
@@ -53,7 +53,7 @@ cumulative_variance_ratio = np.cumsum(explained_variance_ratio)
 for i, cum_ratio in enumerate(cumulative_variance_ratio, 1):
     print(f"Top {i} PCs: {cum_ratio:.4f} ({cum_ratio*100:.2f}%)")
 
-#========================================================================
+
 
 # Scatter plot of the first two principal components
 #Color points by sample type
@@ -80,7 +80,7 @@ plt.show()
 #plt.savefig('pca_scatter_plot.png', dpi=300)
 plt.close()
 
-#========================================================================
+
 
 # Calculate component loadings to analyze contribution of each feature to PCs
 component_loadings = pd.DataFrame(
