@@ -106,7 +106,7 @@ top_3 = sum(pca.explained_variance_ratio_[:3])
 print(f"Top 3 PCs explain {top_3:.2%} of total variance")
 
 # 3D PCA
-from mpl_toolkits.mplot3d import Axes3D  # 注意：這行雖然沒直接用到，但需引入才能啟用 3D
+from mpl_toolkits.mplot3d import Axes3D  
 
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
