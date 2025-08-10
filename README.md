@@ -1,4 +1,4 @@
-# PCA_Gene_Exp
+# PCA-Gene-Expression
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
